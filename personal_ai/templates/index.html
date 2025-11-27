@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal AI Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1>🤖 {{ persona_name }}</h1>
+            <p class="subtitle">Your Personal AI Companion</p>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3>Tasks</h3>
+                    <div id="tasks-list" class="tasks-list"></div>
+                    <button id="add-task-btn" class="btn btn-primary">+ Add Task</button>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Profile</h3>
+                    <div id="profile-list" class="profile-list"></div>
+                    <button id="add-profile-btn" class="btn btn-secondary">+ Add Profile Info</button>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Reflections</h3>
+                    <div id="reflections-list" class="reflections-list"></div>
+                    <button id="add-reflection-btn" class="btn btn-secondary">+ Add Reflection</button>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div id="chat-messages" class="chat-messages"></div>
+                <div class="chat-input-container">
+                    <input 
+                        type="text" 
+                        id="chat-input" 
+                        class="chat-input" 
+                        placeholder="Type your message or use /help for commands..."
+                        autocomplete="off"
+                    />
+                    <button id="send-btn" class="send-btn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="task-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Task</h2>
+            <input type="text" id="task-description" placeholder="Task description..." />
+            <button id="save-task-btn" class="btn btn-primary">Save Task</button>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Profile Information</h2>
+            <input type="text" id="profile-key" placeholder="Key (e.g., name, location)" />
+            <input type="text" id="profile-value" placeholder="Value" />
+            <button id="save-profile-btn" class="btn btn-primary">Save</button>
+        </div>
+    </div>
+
+    <div id="reflection-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Reflection</h2>
+            <textarea id="reflection-note" placeholder="What did you learn or reflect on today?"></textarea>
+            <button id="save-reflection-btn" class="btn btn-primary">Save Reflection</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
+
