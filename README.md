@@ -1,73 +1,117 @@
-# Personal AI Prototype
+# Personal AI
 
-A Python console companion inspired by the Jarvis vision: natural conversation, gentle coaching, and proactive help grounded in your goals.
+A "Jarvis"-style personal AI companion written in Python. You can chat with it in the terminal or a web browser. It remembers your conversations, your goals and tasks, and facts about you, and uses that context to give more personal, helpful replies.
 
-## Features
-- Conversational assistant powered by OpenAI chat models with configurable persona.
-- Persistent memory that captures conversation context, profile facts, and reflections.
-- Basic goal and task tracker with `/addtask`, `/tasks`, and `/donetask` commands.
-- Long-term summary refresh to keep responses aligned with your history.
-- Markdown-friendly console output (via `rich`) for readable replies.
+> **📚 About this project**
+>
+> This is a personal learning project. I'm building it to learn how to work with LLM APIs, write Python apps with Flask, store data, and write tests. It's a work in progress with rough edges, not production software. Feedback and suggestions are welcome!
 
-## Setup
-1. Create and activate a virtual environment (recommended).
+## What it does
+
+- **Chat with memory** – conversations are saved, so the assistant has context from earlier chats.
+- **Long-term summary** – the assistant periodically summarizes your history to stay aligned with your goals.
+- **Tasks and goals** – add, list, and complete tasks; open tasks are shared with the assistant.
+- **Profile facts and reflections** – store things about yourself and notes or lessons you want it to remember.
+- **Two ways to use it** – a web UI (chat plus sidebars for tasks, profile, and reflections) or a console app.
+- **Configurable persona** – change the assistant's name and personality.
+
+## How it works
+
+```
+personal_ai/
+├── config.py      # Loads settings from environment variables / .env
+├── llm.py         # Small wrapper around the OpenAI chat API
+├── memory.py      # Saves conversation, summary, profile, reflections (JSON file)
+├── tasks.py       # Saves the task list (JSON file)
+├── assistant.py   # Builds the prompt with your context and handles /commands
+├── cli.py         # Console chat loop (uses `rich`)
+├── web.py         # Flask web server and REST API
+├── templates/     # Web UI page
+└── static/        # Web UI CSS and JavaScript
+main.py            # Starts the console app
+web.py             # Starts the web app
+tests/             # pytest test suite
+```
+
+Everything is stored locally in `~/.personal_ai/` (`state.json` and `tasks.json`).
+
+## Getting started
+
+You need Python 3.10+ and an OpenAI API key.
+
+1. Clone the repo and create a virtual environment (recommended):
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate   # Windows: .venv\Scripts\activate
+   ```
 2. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-3. Expose your OpenAI API key:
+3. Set your OpenAI API key, either as an environment variable:
    ```bash
    export OPENAI_API_KEY="sk-..."
    ```
-   Optionally, create a `.env` file with the same key; the app loads it automatically.
+   or by copying `.env.example` to `.env` and filling in the key.
 
-## Running
-
-### Web UI (Recommended)
-
-Launch the web interface:
+### Run the web UI
 
 ```bash
-python web.py
+python web.py          # http://127.0.0.1:5000
+python web.py 8080     # custom port
+python web.py --debug  # Flask debug mode
 ```
 
-Or with custom port:
-```bash
-python web.py 8080
-```
-
-Then open your browser to `http://127.0.0.1:5000` (or your custom port).
-
-The web UI provides:
-- Real-time chat interface
-- Task management sidebar
-- Profile information panel
-- Reflections tracker
-- Beautiful dark theme
-
-### Console Interface
-
-For command-line usage:
+### Run the console app
 
 ```bash
 python main.py
 ```
 
-Interact naturally or use slash commands for structure:
-- `/help` – show command list
-- `/addtask <description>` – log a new task
-- `/tasks` – list tasks
-- `/donetask <idprefix>` – mark complete
-- `/profile key=value` – store personal facts
-- `/reflect <note>` – capture insights
+## Commands
 
-State is stored under `~/.personal_ai/` by default. Customize behavior with environment variables:
-- `PERSONAL_AI_MODEL` – model name (default `gpt-4o-mini`)
-- `PERSONAL_AI_TEMPERATURE` – creativity level
-- `PERSONAL_AI_STATE_PATH` / `PERSONAL_AI_TASK_PATH` – storage locations
-- `PERSONAL_AI_PERSONA_NAME` / `PERSONAL_AI_PERSONA_DESCRIPTION` – voice and tone
+Type these in either the console or the web chat:
 
-## Next Ideas
-- Hook in calendar/email APIs for real task automation.
-- Add voice input/output for a hands-free experience.
-- Expand memory with semantic search and richer reflections.
+| Command | What it does |
+|---|---|
+| `/help` | Show the command list |
+| `/addtask <description>` | Add a new task |
+| `/tasks` | List your tasks |
+| `/donetask <id prefix>` | Mark a task as done |
+| `/profile key=value` | Save a fact about yourself |
+| `/reflect <note>` | Save a reflection or lesson |
+
+Anything else is sent to the assistant as a normal chat message.
+
+## Configuration
+
+Optional environment variables (or `.env` entries):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `PERSONAL_AI_MODEL` | `gpt-4o-mini` | OpenAI model to use |
+| `PERSONAL_AI_TEMPERATURE` | `0.7` | Creativity of replies |
+| `PERSONAL_AI_PERSONA_NAME` | `Jarvis` | Assistant's name |
+| `PERSONAL_AI_PERSONA_DESCRIPTION` | (built-in) | Assistant's personality and tone |
+| `PERSONAL_AI_STATE_PATH` | `~/.personal_ai/state.json` | Where memory is saved |
+| `PERSONAL_AI_TASK_PATH` | next to the state file | Where tasks are saved |
+| `PERSONAL_AI_MAX_CONTEXT_MESSAGES` | `12` | Recent messages sent with each chat |
+| `PERSONAL_AI_SUMMARY_EVERY` | `16` | Message count before summaries start |
+
+## Testing
+
+```bash
+pytest
+```
+
+The tests mock the OpenAI client, so you don't need an API key to run them. See [TESTING.md](TESTING.md) for more options.
+
+## What I'm learning and what's next
+
+Things I want to explore as I keep building:
+
+- Fix known issues, such as summaries running on every message once the history passes 16 messages, and conversation history that grows without limit.
+- Add tests for the web server.
+- Semantic search over memory.
+- Calendar and email integrations for real task automation.
+- Voice input and output for hands-free use.
